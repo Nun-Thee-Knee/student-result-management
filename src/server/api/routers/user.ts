@@ -7,8 +7,24 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return ctx.db.user.findFirst({
         where: {
-          id: "clyh43uun0000gxvv4n78ebpi",
+          id: input.id,
         },
       });
     }),
-})
+  
+  updateRole: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      newRole: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          role: input.newRole,
+        },
+      });
+    }),
+});
