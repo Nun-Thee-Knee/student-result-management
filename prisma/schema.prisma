@@ -7,10 +7,6 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
@@ -60,10 +56,19 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
-    role    String? @default("null")
+    role          String?   @default("null")
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    classes       Class[]   @relation("ClassStudents")
+}
+
+model Class {
+    id        String   @id @default(cuid())
+    name      String
+    semester  String
+    year      Int
+    students  User[]   @relation("ClassStudents")
 }
 
 model VerificationToken {

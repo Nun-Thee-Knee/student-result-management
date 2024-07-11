@@ -2,14 +2,14 @@
 import React, { useState } from 'react'
 import { api } from '~/trpc/react'
 
-const Role = () => {
+const Role = ({userId}:{userId:string}) => {
     const [role, setRole] = useState("")
     const [error, setError] = useState("")
 
     const mutation = api.user.updateRole.useMutation()
 
     const handleProceed = () => {
-        mutation.mutate({ id: "clyh6vbgd0002anul5rjqnody", newRole: role }, {
+        mutation.mutate({ id: userId, newRole: role }, {
             onSuccess: (data) => {
                 console.log("Role updated successfully", data)
                 window.location.reload()
