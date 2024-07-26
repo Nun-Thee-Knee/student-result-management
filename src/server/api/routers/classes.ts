@@ -6,7 +6,7 @@ import {
 } from "~/server/api/trpc";
 
 export const classRouter = createTRPCRouter({
-    createClass: protectedProcedure
+  createClass: protectedProcedure
     .input(z.object({
       name: z.string().min(1),
       semester: z.string().min(1),
@@ -23,9 +23,24 @@ export const classRouter = createTRPCRouter({
         },
       });
     }),
-    getClass: protectedProcedure
+  getClass: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
       return ctx.db.class.findMany()
     }),
-})
+  addStudent: protectedProcedure
+    .input(z.object({
+      classId: z.string().min(1),
+      studentId: z.string().min(1),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.class.update({
+        where: { id: input.classId },
+        data: {
+          students: {
+            connect: { id: input.studentId }
+          }
+        }
+      });
+    }),
+});
