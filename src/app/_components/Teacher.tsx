@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, ChangeEvent, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { api } from '~/trpc/react';
 
 interface FormData {
@@ -22,7 +23,9 @@ const Teacher: React.FC<TeacherProps> = ({ userId }) => {
   const [error, setError] = useState<string>('');
 
   const mutation = api.classes.createClass.useMutation();
-  const { data: classes, error: fetchError, isLoading, refetch } = api.classes.getClass.useQuery({id: userId});
+  const { data: classes, error: fetchError, isLoading, refetch } = api.classes.getClass.useQuery({ id: userId });
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,6 +63,10 @@ const Teacher: React.FC<TeacherProps> = ({ userId }) => {
       setError('Failed to fetch classes. Please try again.');
     }
   }, [fetchError]);
+
+  const handleClassClick = (id: string) => {
+    router.push(`${pathname}/${id}`);
+  };
 
   return (
     <div className='flex flex-col items-start justify-start h-auto p-14 gap-14'>
@@ -109,14 +116,20 @@ const Teacher: React.FC<TeacherProps> = ({ userId }) => {
           <div className='text-white'>Loading...</div>
         ) : (
           classes?.map((classItem) => (
-            <div key={classItem.id} className="flex items-center justify-center bg-blue-700 p-5 text-white cursor-pointer hover:bg-blue-900">
+            <div 
+              key={classItem.id} 
+              className="flex items-center justify-center bg-blue-700 p-5 text-white cursor-pointer hover:bg-blue-900"
+              onClick={() => handleClassClick(classItem.id)}
+            >
               <center>
-              Subject Name: {classItem.name}
-              <br />
-              Semester: {classItem.semester}
-              <br />
-              Year: {classItem.year}
-            </center>
+                Class ID: {classItem.id}
+                <br />
+                Subject Name: {classItem.name}
+                <br />
+                Semester: {classItem.semester}
+                <br />
+                Year: {classItem.year}
+              </center>
             </div>
           ))
         )}
