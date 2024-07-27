@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { api } from '~/trpc/react';
 
 const AddStudentForm: React.FC = () => {
-  const [studentId, setStudentId] = useState<string>('');
+  const [studentEmail, setStudentEmail] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   
   const pathname = usePathname();
@@ -26,7 +26,7 @@ const AddStudentForm: React.FC = () => {
     e.preventDefault();
     setError(null); // Reset error before new request
     try {
-      await mutation.mutateAsync({ classId, studentId });
+      await mutation.mutateAsync({ classId, studentEmail });
     } catch (err) {
       console.error(err); // Log any additional errors
     }
@@ -40,10 +40,10 @@ const AddStudentForm: React.FC = () => {
     <div className='flex items-center justify-center p-20'>
       <form onSubmit={handleSubmit} className='space-y-4'>
         <input
-          type="text"
-          placeholder="Student ID"
-          value={studentId}
-          onChange={(e) => setStudentId(e.target.value)}
+          type="email"
+          placeholder="Student Email"
+          value={studentEmail}
+          onChange={(e) => setStudentEmail(e.target.value)}
           className='w-full p-2 border rounded'
           required
         />

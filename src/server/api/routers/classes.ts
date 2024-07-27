@@ -31,14 +31,22 @@ export const classRouter = createTRPCRouter({
   addStudent: protectedProcedure
     .input(z.object({
       classId: z.string().min(1),
-      studentId: z.string().min(1),
+      studentEmail: z.string().email(),
     }))
     .mutation(async ({ ctx, input }) => {
+      const student = await ctx.db.user.findUnique({
+        where: { email: input.studentEmail },
+      });
+
+      if (!student) {
+        throw new Error("Student not found");
+      }
+
       return ctx.db.class.update({
         where: { id: input.classId },
         data: {
           students: {
-            connect: { id: input.studentId }
+            connect: { id: student.id }
           }
         }
       });
