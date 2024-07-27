@@ -51,24 +51,40 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    role          String?   @default("null")
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
-    classes       Class[]   @relation("ClassStudents")
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  emailVerified DateTime?
+  image         String?
+  role          String?        @default("null")
+  accounts      Account[]
+  sessions      Session[]
+  posts         Post[]
+  classes       Class[]        @relation("ClassStudents")
+  marks         StudentMarks[]
+}
+model Class {
+  id        String        @id @default(cuid())
+  name      String
+  semester  String
+  year      Int
+  students  User[]        @relation("ClassStudents") // Removed the references argument
+  marks     StudentMarks[]
 }
 
-model Class {
-    id        String   @id @default(cuid())
-    name      String
-    semester  String
-    year      Int
-    students  User[]   @relation("ClassStudents")
+model StudentMarks {
+  id        String   @id @default(cuid())
+  ia1       Int
+  ia2       Int
+  ia3       Int
+  see       Int
+  userId    String
+  classId   String
+
+  user      User     @relation(fields: [userId], references: [id])
+  class     Class    @relation(fields: [classId], references: [id])
+
+  @@unique([userId, classId])
 }
 
 model VerificationToken {
